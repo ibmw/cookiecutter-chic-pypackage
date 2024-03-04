@@ -1,0 +1,73 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  linting:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5.0.0
+        with:
+          python-version: 3.12
+
+      - name: Install system deps
+        shell: bash
+        run: |
+          pip install poetry
+          poetry config virtualenvs.in-project true
+          poetry install --with dev,test,docs --no-root  --sync
+
+      - name: Linting
+        shell: bash
+        run: poetry run pre-commit run --all-files
+
+      - name: Testing
+        shell: bash
+        run: poetry run pytest ./tests/
+
+  tests:
+    needs: linting
+    name: ${{ matrix.os }} / ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      matrix:
+        os: [Ubuntu, MacOS]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install system deps
+        shell: bash
+        run: |
+          pip install poetry
+          poetry config virtualenvs.in-project true
+
+      - name: Run mypy with nox
+        shell: bash
+        run: poetry run mypy .
+
+      - name: Run tests with nox
+        shell: bash
+        run: poetry run pytest ./tests/
+
+      - name: Run security check
+        if: matrix.python-version == '3.12'
+        shell: bash
+        run: safety check
