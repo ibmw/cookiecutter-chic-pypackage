@@ -1,0 +1,80 @@
+site_name: {{ cookiecutter.package_name }}
+site_url: https://{{ cookiecutter.github_username }}.github.io/{{ cookiecutter.package_name|slugify }}
+repo_url: https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.package_name|slugify }}
+repo_name: {{ cookiecutter.github_username }}/{{ cookiecutter.package_name|slugify }}
+nav:
+  - home: index.md
+  - installation: installation.md
+  - usage: usage.md
+  {%- if cookiecutter.with_fastapi_api|int %}
+  - modules: api.md
+  {% endif -%}
+  {%- if cookiecutter.with_contributing_file|int %}
+  - contributing: contributing.md
+  {% endif -%}
+  {%- if cookiecutter.with_code_of_conduct|int %}
+  - code of conduct: code_of_conduct.md
+  {% endif -%}
+  {%- if cookiecutter.with_security_file|int %}
+  - security: security.md
+  {% endif -%}
+  - history: HISTORY.md
+
+theme:
+  name: material
+  language: en
+  #logo: assets/logo.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.indexes
+    - navigation.tabs
+    - navigation.instant
+    - navigation.tabs.sticky
+
+markdown_extensions:
+  - pymdownx.highlight:
+      linenums: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.tabbed
+  - attr_list
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight:
+      linenums: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - admonition
+  - toc:
+      baselevel: 2
+      permalink: true
+      slugify: !!python/name:pymdownx.slugs.uslugify
+plugins:
+  - include-markdown
+  - search:
+      lang: en
+  - mkdocstrings:
+      watch:
+        - {{ cookiecutter.package_name|slugify }}
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/{{ cookiecutter.github_username }}
+      name: Github
+    - icon: material/email
+      link: "mailto:{{ cookiecutter.author_email }}"
