@@ -1,0 +1,35 @@
+{
+    "package_name": "My Awesome Package Name",
+    "__package_name_kebab_case": "{{ cookiecutter.package_name|slugify }}",
+    "__package_name_snake_case": "{{ cookiecutter.package_name|slugify(separator='_') }}",
+    "package_description": "This Python package is so awesome, it practically codes itself... and then makes coffee",
+    "github_username": "janelovepython",
+    "package_url": "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.__package_name_kebab_case }}",
+    "author_name": "Jane Smith",
+    "author_email": "jane@example.com",
+    "python_version": "3.12",
+    "docker_image": "python:$PYTHON_VERSION-slim",
+    "development_environment": [
+        "simple",
+        "strict"
+    ],
+    "with_conventional_commits": "{% if cookiecutter.development_environment == 'simple' %}0{% else %}1{% endif %}",
+    "with_fastapi_api": "0",
+    "with_jupyter_lab": "0",
+    "with_pydantic_typing": "0",
+    "with_streamlit_app": "0",
+    "with_typer_cli": "0",
+    "with_mkdocs": "1",
+    "with_code_of_conduct": "0",
+    "with_contributing_file": "0",
+    "with_security_file": "0",
+    "_copy_without_render": [
+        "docs/history.md",
+        "docs/contributing.md",
+        "docs/security.md",
+        "docs/code_of_conduct.md",
+        "docs/index.md",
+        ".github/workflows/*.yml",
+        ".docstring.tpl"
+    ]
+}
