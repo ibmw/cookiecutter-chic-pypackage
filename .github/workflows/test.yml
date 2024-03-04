@@ -26,7 +26,7 @@ jobs:
         run: |
           pip install poetry
           poetry config virtualenvs.in-project true
-          poetry install --with dev,test,docs --no-root  --sync
+          poetry install --with dev,test,docs --no-root --sync
 
       - name: Linting
         shell: bash
