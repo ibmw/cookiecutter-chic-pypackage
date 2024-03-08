@@ -31,7 +31,7 @@ jobs:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
-        run: poetry install --with dev,test,docs --no-root --sync
+        run: poetry install --with dev,test,docs --no-root
       - name: Linting
         run: poetry run pre-commit run --all-files
       - name: Testing
@@ -64,7 +64,7 @@ jobs:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
-        run: poetry install --with dev,test,docs --no-root --sync
+        run: poetry install --with dev,test,docs --no-root
       - name: Run mypy with nox
         shell: bash
         run: poetry run mypy .
