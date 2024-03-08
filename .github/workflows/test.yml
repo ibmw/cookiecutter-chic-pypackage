@@ -21,17 +21,13 @@ jobs:
           python-version: 3.12
       - name: Install poetry
         uses: abatilo/actions-poetry@v2
-      - name: Setup a local virtual environment (if no poetry.toml file)
-        run: |
-          poetry config virtualenvs.create true --local
-          poetry config virtualenvs.in-project true --local
       - uses: actions/cache@v3
         name: Define a cache for the virtual environment based on the dependencies lock file
         with:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
-        run: poetry install --with dev,test,docs --no-root
+        run: poetry install --with dev,test,docs --no-root --sync
       - name: Linting
         run: poetry run pre-commit run --all-files
       - name: Testing
@@ -44,7 +40,7 @@ jobs:
     strategy:
       matrix:
         os: [Ubuntu, MacOS]
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12"]
       fail-fast: true
     steps:
       - uses: actions/checkout@v4.1.1
@@ -54,21 +50,17 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install poetry
         uses: abatilo/actions-poetry@v2
-      - name: Setup a local virtual environment (if no poetry.toml file)
-        run: |
-          poetry config virtualenvs.create true --local
-          poetry config virtualenvs.in-project true --local
       - uses: actions/cache@v3
         name: Define a cache for the virtual environment based on the dependencies lock file
         with:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
-        run: poetry install --with dev,test,docs --no-root
-      - name: Run mypy with nox
+        run: poetry install --with dev,test,docs --no-root --sync
+      - name: Run mypy
         shell: bash
         run: poetry run mypy .
-      - name: Run tests with nox
+      - name: Run tests
         shell: bash
         run: poetry run pytest ./tests/
       - name: Run security check
