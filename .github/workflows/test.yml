@@ -15,25 +15,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.1
-
       - name: Set up Python 3.12
         uses: actions/setup-python@v5.0.0
         with:
           python-version: 3.12
-
-      - name: Install system deps
-        shell: bash
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+      - name: Setup a local virtual environment (if no poetry.toml file)
         run: |
-          pip install poetry
-          poetry config virtualenvs.in-project true
-          poetry install --with dev,test,docs --no-root --sync
-
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+      - uses: actions/cache@v3
+        name: Define a cache for the virtual environment based on the dependencies lock file
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+      - name: Install the project dependencies
+        run: poetry install --with dev,test,docs --no-root --sync
       - name: Linting
-        shell: bash
         run: poetry run pre-commit run --all-files
-
       - name: Testing
-        shell: bash
         run: poetry run pytest ./tests/
 
   tests:
@@ -47,26 +48,29 @@ jobs:
       fail-fast: true
     steps:
       - uses: actions/checkout@v4.1.1
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5.0.0
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Install system deps
-        shell: bash
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+      - name: Setup a local virtual environment (if no poetry.toml file)
         run: |
-          pip install poetry
-          poetry config virtualenvs.in-project true
-
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+      - uses: actions/cache@v3
+        name: Define a cache for the virtual environment based on the dependencies lock file
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+      - name: Install the project dependencies
+        run: poetry install --with dev,test,docs --no-root --sync
       - name: Run mypy with nox
         shell: bash
         run: poetry run mypy .
-
       - name: Run tests with nox
         shell: bash
         run: poetry run pytest ./tests/
-
       - name: Run security check
         if: matrix.python-version == '3.12'
         shell: bash
