@@ -8,7 +8,7 @@ If you believe you have found a security vulnerability, please report it to us a
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Report security vulnerabilities by emailing the lead maintainer at fedejaure@gmail.com.
+Report security vulnerabilities by emailing the lead maintainer at contact@olivier-maillot.fr
 
 You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message.
 
@@ -26,4 +26,4 @@ This information will help us triage your report more quickly.
 
 ## Preferred Languages
 
-We prefer all communications to be in English.
+We prefer all communications to be in English or French.
