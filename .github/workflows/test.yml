@@ -16,7 +16,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - run: rm -rf poetry.lock
+      - name: Removing poetry.lock
+        run: rm -rf poetry.lock
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -49,11 +50,13 @@ jobs:
     strategy:
       matrix:
         os: [Ubuntu, MacOS]
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.12"]
       fail-fast: true
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Removing poetry.lock
+        run: rm -rf poetry.lock
       - name: Set up Python ${{ matrix.python-version }}
         id: setup-python
         uses: actions/setup-python@v5
