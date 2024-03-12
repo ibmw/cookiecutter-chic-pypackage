@@ -2,6 +2,7 @@
 default_install_hook_types: [commit-msg, pre-commit]
 default_stages: [commit, manual]
 fail_fast: true
+exclude: ^{{ cookiecutter.__package_name_kebab_case }}/
 repos:
   - repo: meta
     hooks:
@@ -31,6 +32,7 @@ repos:
       - id: check-vcs-permalinks
       - id: check-xml
       - id: check-yaml
+        args: [--unsafe]
       - id: debug-statements
       - id: destroyed-symlinks
       - id: detect-private-key
