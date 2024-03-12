@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - run: rm -rf poetry.lock
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -23,6 +24,7 @@ jobs:
       - name: Install poetry
         uses: snok/install-poetry@v1
         with:
+          version: 1.7.1
           virtualenvs-create: true
           virtualenvs-in-project: true
           installer-parallel: true
@@ -60,8 +62,10 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
+          version: 1.7.1
           virtualenvs-create: true
           virtualenvs-in-project: true
+          installer-parallel: true
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v3
