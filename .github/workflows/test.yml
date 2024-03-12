@@ -14,20 +14,27 @@ jobs:
     name: Linting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.1
+      - name: Check out repository
+        uses: actions/checkout@v4
       - name: Set up Python 3.12
-        uses: actions/setup-python@v5.0.0
+        uses: actions/setup-python@v5
         with:
           python-version: 3.12
       - name: Install poetry
-        uses: abatilo/actions-poetry@v2
-      - uses: actions/cache@v3
-        name: Define a cache for the virtual environment based on the dependencies lock file
+        uses: snok/install-poetry@v1
         with:
-          path: ./.venv
-          key: venv-${{ hashFiles('poetry.lock') }}
-      - name: Install the project dependencies
-        run: poetry install --with dev,test,docs --no-root --sync
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --with dev,test,docs --no-interaction --no-root --sync
       - name: Linting
         run: poetry run pre-commit run --all-files
       - name: Testing
@@ -43,27 +50,31 @@ jobs:
         python-version: ["3.10", "3.11", "3.12"]
       fail-fast: true
     steps:
-      - uses: actions/checkout@v4.1.1
+      - name: Check out repository
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5.0.0
+        id: setup-python
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install poetry
-        uses: abatilo/actions-poetry@v2
-      - uses: actions/cache@v3
-        name: Define a cache for the virtual environment based on the dependencies lock file
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
         with:
-          path: ./.venv
-          key: venv-${{ hashFiles('poetry.lock') }}
-      - name: Install the project dependencies
-        run: poetry install --with dev,test,docs --no-root --sync
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --with dev,test,docs --no-interaction --no-root
       - name: Run mypy
-        shell: bash
         run: poetry run mypy .
       - name: Run tests
-        shell: bash
         run: poetry run pytest ./tests/
       - name: Run security check
         if: matrix.python-version == '3.12'
-        shell: bash
         run: safety check
